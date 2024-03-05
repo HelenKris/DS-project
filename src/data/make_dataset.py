@@ -1,6 +1,4 @@
-# import os
 import pandas as pd
-# from pathlib import Path
 import pandas as pd
 import sys
 sys.path.append('D:/Innowise/DS project')
@@ -15,11 +13,13 @@ test_path = config.test_path
 prepared_data_path = config.prepared_data_path
 replace_dict = config.replace_dict
 test_block_num = config.test_block_num
+max_time_cnt = config.max_time_cnt
+max_time_price = config.max_time_price
 
 class ELT:
     def __init__(self, item_cat_path, items_path, shops_path,
                  sales_train_path, test_path, prepared_data_path,
-                 test_block_num,replace_dict):
+                 test_block_num,replace_dict,max_time_cnt,max_time_price):
         self.item_cat_path = item_cat_path
         self.items_path = items_path
         self.shops_path = shops_path
@@ -28,11 +28,15 @@ class ELT:
         self.prepared_data_path = prepared_data_path
         self.test_block_num = test_block_num
         self.replace_dict = replace_dict
+        self.max_time_cnt = max_time_cnt
+        self.max_time_price = max_time_price
 
     def transform(self):
         df_item_cat, df_items, df_shops, sales_train, test = self._extract_data()
         transformed_data = self._transform_data(df_item_cat, df_items, df_shops, sales_train, test,replace_dict)
-        self._load_data(transformed_data, self.prepared_data_path)
+        filtered_data = self._remove_outliers(transformed_data)
+        grouped_data = self._get_grouped_data(filtered_data)
+        self._load_data(grouped_data, self.prepared_data_path)
 
     def _extract_data(self):
         df_item_cat = pd.read_csv(self.item_cat_path,
@@ -61,6 +65,7 @@ class ELT:
     def _transform_data(self, df_item_cat, df_items, df_shops,
                         sales_train, test,replace_dict):
         data = sales_train.copy()
+        # replace_dict = self.replace_dict
         for old_value, new_value in replace_dict.items():
             data.loc[data['shop_id'] == old_value, 'shop_id'] = new_value
 
@@ -89,8 +94,25 @@ class ELT:
         data['item_name'] = data['item_name'].astype(str)
         return data
 
-    def _load_data(self, transformed_data, prepared_data_path):
-        transformed_data.to_csv(prepared_data_path, index=False)
+    def _remove_outliers(self, data):
+        # At the level of daily observations, remove observations x times larger than the average observation of the sale of this product
+        mean_quantity_by_item = data.groupby('item_name')['item_cnt_day'].mean()
+        mean_price_by_item = data.groupby('item_name')['item_price'].mean()
+        outliers_quantity = data[data['item_cnt_day'] > max_time_cnt * data['item_name'].map(mean_quantity_by_item)]
+        outliers_price = data[data['item_price'] > max_time_price * data['item_name'].map(mean_price_by_item)]
+        data = data.drop(outliers_quantity.index)
+        data = data.drop(outliers_price.index)
+        return data
+
+    def _get_grouped_data(self, data):
+        data = data.groupby(['date_block_num', 'shop_id', 'item_category_id', 'item_id','item_category_name',
+        'shop_name'], as_index=False).agg({'item_price':['mean'], 'item_cnt_day':['sum']})
+        data.columns = ['date_block_num', 'shop_id', 'item_category_id', 'item_id','item_category_name',
+        'shop_name','item_price','item_cnt']
+        return data
+
+    def _load_data(self, data, prepared_data_path):
+        data.to_csv(prepared_data_path, index=False)
 
 if __name__ == "__main__":
     elt_process = ELT(item_cat_path=item_cat_path,
@@ -100,5 +122,8 @@ if __name__ == "__main__":
                       test_path = test_path,
                       prepared_data_path = prepared_data_path,
                       test_block_num = test_block_num,
-                      replace_dict =replace_dict)
+                      replace_dict =replace_dict,
+                      max_time_cnt = max_time_cnt,
+                      max_time_price = max_time_price
+                      )
     elt_process.transform()
