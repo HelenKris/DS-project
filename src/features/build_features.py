@@ -5,19 +5,43 @@ import sys
 sys.path.append('D:/Innowise/DS project')
 import config
 
-
-prepared_data_path = config.prepared_data_path
-prepared_data = pd.read_csv(prepared_data_path)
+prepared_data = pd.read_csv(config.prepared_data_path)
 
 class FeatureEngineering:
 
+    """A class for generating features for a given dataset.
+    Args:
+        start_block_num (int): The starting block number for feature generation.
+        end_block_num (int): The ending block number for feature generation.
+        label_encoder (object): The label encoder object for encoding categorical features.
+        clip_threshold (int): The threshold for clipping item count.
+    Attributes:
+        start_block_num (int): The starting block number for feature generation.
+        end_block_num (int): The ending block number for feature generation.
+        label_encoder (object): The label encoder object for encoding categorical features.
+        clip_threshold (int): The threshold for clipping item count.
+    Methods:
+        _get_price_dynamics(data): Generates price dynamics features based on the part of the dataset.
+        _lag_item_count(data): Generates lagged item count features based on the part of the dataset.
+        _get_mean_features(data): Generates mean features based on the part of the dataset.
+        _get_other_features(data): Generates other features based on the part of the dataset.
+        _label_cat_features(data): Labels categorical features based on the part of the dataset.
+        get_features(data): Combines all feature generation methods and returns the final part of the dataset with features.
+    """
+
     def __init__(self, start_block_num, end_block_num, label_encoder, clip_threshold):
+
+        """Initializes FeatureEngineering class with the provided parameters."""
+
         self.start_block_num = start_block_num
         self.end_block_num = end_block_num
         self.label_encoder = label_encoder
         self.clip_threshold = clip_threshold
 
     def _get_price_dynamics(self, data):
+
+        """Generates price dynamics features based on the part of the dataset."""
+
         df_pivot = data.pivot_table(
             index=['shop_id', 'item_category_id', 'item_id', 'item_category_name', 'shop_name'],
             columns='date_block_num',
@@ -35,6 +59,9 @@ class FeatureEngineering:
         return data
 
     def _lag_item_count(self, data):
+
+        """Generates lagged item count features based on the part of the dataset."""
+
         data['item_cnt'] = data['item_cnt'].clip(0, self.clip_threshold)
         df_pivot = data.pivot_table(
             index=['shop_id', 'item_category_id', 'item_id', 'item_category_name', 'shop_name'],
@@ -52,6 +79,8 @@ class FeatureEngineering:
         return data
 
     def _get_mean_features(self, data):
+
+        """Generates mean features based on the part of the dataset."""
         int_columns = [col for col in data.columns if isinstance(col, int)]
         y_col_name = max(int_columns)
         x_col_names = int_columns.copy()
@@ -75,6 +104,9 @@ class FeatureEngineering:
         return data
 
     def _get_other_features(self, data):
+
+        """Generates other features based on the part of the dataset."""
+
         data = data.fillna(0.0)
         int_columns = [col for col in data.columns if isinstance(col, int)]
         y_col_name = max(int_columns)
@@ -97,6 +129,9 @@ class FeatureEngineering:
         return data
 
     def _label_cat_features(self, data):
+
+        """Labels categorical features based on the part of the dataset."""
+
         data['shop_name'] = self.label_encoder.fit_transform(data['shop_name'])
         data['item_category_name'] = self.label_encoder.fit_transform(data['item_category_name'])
         data['cat_price_cat'] = self.label_encoder.fit_transform(data['cat_price_cat'])
@@ -104,6 +139,9 @@ class FeatureEngineering:
         return data
 
     def get_features(self, data):
+
+        """Combines all feature generation methods and returns the final part of the dataset with features."""
+
         lag_price_features = self._get_price_dynamics(data)
         lag_item_data = self._lag_item_count(data)
         str_columns = [col for col in lag_item_data.columns if isinstance(col, str)]
@@ -113,8 +151,7 @@ class FeatureEngineering:
         full_data = self._label_cat_features(full_data)
         return full_data
 
-label_encoder = LabelEncoder()
-clip_threshold = 20
-processor = FeatureEngineering(start_block_num=0,end_block_num=34,label_encoder = label_encoder, clip_threshold = clip_threshold)
-train_data = processor.get_features(prepared_data)
-print(train_data.info())
+# label_encoder = LabelEncoder()
+# clip_threshold = 20
+# processor = FeatureEngineering(start_block_num=0,end_block_num=34,label_encoder = label_encoder, clip_threshold = clip_threshold)
+# train_data = processor.get_features(prepared_data)
