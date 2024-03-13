@@ -23,3 +23,6 @@ test_block_num = 34
 # Parameter for estimating the daily outlier, if exceeded by a specified number of times,it will be deleted
 max_time_price = 10
 max_time_cnt = 100
+
+# Parameter for target clipping
+clip_threshold = 20
