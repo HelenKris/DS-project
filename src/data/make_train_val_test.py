@@ -17,8 +17,8 @@ X_train_list = []
 y_train_list = []
 
 # In the cycle we go through a window of 12 months
-# with a step of 3 month and form parts of the dataset for subsequent cocatenation
-for end_block_num in range(test_block_num, -1, -3):
+# with a step of 1 month and form parts of the dataset for subsequent cocatenation
+for end_block_num in range(test_block_num, -1, -1):
     if end_block_num - 12 >= 0:
         start_block_num = end_block_num - 12
         processor = FeatureEngineering(start_block_num=start_block_num,
@@ -32,7 +32,7 @@ for end_block_num in range(test_block_num, -1, -3):
 
 # We create a test dataset where end_block_num=test_block_num and  start_block_num=end_block_num - 12
 X_test = X_train_list[0]
-y_test = y_train_list[0]
+# y_test = y_train_list[0]
 
 # We create a test dataset where end_block_num=(test_block_num - 1)  and  start_block_num=(end_block_num - 12 -1)
 X_val = pd.concat([X_train_list[1], X_train_list[len(X_train_list)-1]], ignore_index=True)
@@ -52,4 +52,4 @@ y_train.to_csv(config.y_train_path, index=False)
 X_val.to_csv(config.X_val_path, index=False)
 y_val.to_csv(config.y_val_path, index=False)
 X_test.to_csv(config.X_test_path, index=False)
-y_test.to_csv(config.y_test_path, index=False)
+# y_test.to_csv(config.y_test_path, index=False)

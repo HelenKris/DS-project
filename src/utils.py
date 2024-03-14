@@ -16,6 +16,7 @@ def get_data(data):
     # Rename the lags to x_train
     rename_dict = {col: f'lag {i+1}' for i, col in enumerate([col for col in X_train .columns if isinstance(col, int)][::-1])}
     X_train.rename(columns=rename_dict, inplace=True)
+    X_train = X_train.round().astype(int)
     y_train.columns = ['y']
     return X_train, y_train
 
