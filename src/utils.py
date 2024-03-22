@@ -14,10 +14,15 @@ def get_data(data):
     X_train = data.drop([y_col_name], axis=1)
     y_train = data[y_col_name]
     # Rename the lags to x_train
-    rename_dict = {col: f'lag {i+1}' for i, col in enumerate([col for col in X_train .columns if isinstance(col, int)][::-1])}
+    rename_dict = {
+        col: f"lag {i+1}"
+        for i, col in enumerate(
+            [col for col in X_train.columns if isinstance(col, int)][::-1]
+        )
+    }
     X_train.rename(columns=rename_dict, inplace=True)
     X_train = X_train.round().astype(int)
-    y_train.columns = ['y']
+    y_train.columns = ["y"]
     return X_train, y_train
 
 def downcast(df, verbose=False):
@@ -26,15 +31,15 @@ def downcast(df, verbose=False):
     start_mem = df.memory_usage().sum() / 1024**2
     for col in df.columns:
         dtype_name = df[col].dtype.name
-        if dtype_name == 'object':
+        if dtype_name == "object":
             pass
-        elif dtype_name == 'bool':
-            df[col] = df[col].astype('int8')
-        elif dtype_name.startswith('int') or (df[col].round() == df[col]).all():
-            df[col] = pd.to_numeric(df[col], downcast='integer')
+        elif dtype_name == "bool":
+            df[col] = df[col].astype("int8")
+        elif dtype_name.startswith("int") or (df[col].round() == df[col]).all():
+            df[col] = pd.to_numeric(df[col], downcast="integer")
         else:
-            df[col] = pd.to_numeric(df[col], downcast='float')
+            df[col] = pd.to_numeric(df[col], downcast="float")
     end_mem = df.memory_usage().sum() / 1024**2
     if verbose:
-        print('{:.1f}% compressed'.format(100 * (start_mem - end_mem) / start_mem))
+        print("{:.1f}% compressed".format(100 * (start_mem - end_mem) / start_mem))
     return df
