@@ -28,4 +28,9 @@ DS Project/
     │    └── train_model.py
     ├── utils.py
     └──__init__.py
+    ├── get_data.py
+    ├── get_predictions.py
+    ├── dvc.lock
+    ├── dvc.yaml
+    └──inference.py
 ```

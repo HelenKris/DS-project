@@ -4,10 +4,15 @@ stages:
     deps:
       - data/raw/sales_train.csv
       - get_data.py
-      - data/raw/sales_train.csv
       - data/processed/X_train.csv
       - data/processed/y_train.csv
       - data/processed/X_val.csv
       - data/processed/y_val.csv
       - data/processed/X_test.csv
       - data/processed/prepared_data.csv
+
+  get_predictions:
+    cmd: python get_predictions.py
+    deps:
+      - data/raw/sales_train.csv
+      - get_predictions.py

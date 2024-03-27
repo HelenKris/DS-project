@@ -90,3 +90,14 @@ stages:
       hash: md5
       md5: 1f0de6a0aa17b92c948ef53ab5f59d8b
       size: 1375
+  get_predictions:
+    cmd: python get_predictions.py
+    deps:
+    - path: data/raw/sales_train.csv
+      hash: md5
+      md5: bc7e53cc48549aba37d690093256facf
+      size: 94603866
+    - path: get_predictions.py
+      hash: md5
+      md5: d05d06b0b59dc1eb1bd01b64aede5c87
+      size: 421
