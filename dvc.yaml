@@ -1,26 +1,13 @@
 stages:
-  check_data_changes:
-    cmd: dvc checkout
+  prepare_data:
+    cmd: python get_data.py
     deps:
-      - data/raw/item_categories.csv
-      - data/raw/items.csv
-      - data/raw/shops.csv
       - data/raw/sales_train.csv
-      - data/raw/test.csv
       - get_data.py
+      - data/raw/sales_train.csv
       - data/processed/X_train.csv
       - data/processed/y_train.csv
       - data/processed/X_val.csv
       - data/processed/y_val.csv
       - data/processed/X_test.csv
       - data/processed/prepared_data.csv
-
-  prepare_data:
-    cmd: python get_data.py
-    deps:
-      - data/raw/item_categories.csv
-      - data/raw/items.csv
-      - data/raw/shops.csv
-      - data/raw/sales_train.csv
-      - data/raw/test.csv
-      - get_data.py

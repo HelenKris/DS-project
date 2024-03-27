@@ -12,7 +12,7 @@ y_val_path = "./data/processed/y_val.csv"
 X_test_path = "./data/processed/X_test.csv"
 best_grid_model_save_path = "./src/models/best_grid_model.pkl"
 xgb_model_save_path = "./src/models/xgb_model.pkl"
-
+predict_outputs_path = "./data/predict_outputs/predictions.csv"
 
 # Dictionary of system duplicate store ids that need to be replaced
 replace_dict = {0: 57, 1: 58, 11: 10, 40: 39}

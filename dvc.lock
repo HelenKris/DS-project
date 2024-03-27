@@ -1,0 +1,92 @@
+schema: '2.0'
+stages:
+  check_data_changes:
+    cmd: dvc checkout
+    deps:
+    - path: data/processed/X_test.csv
+      hash: md5
+      md5: 7c86e8e43ac9f57f8ef5422c3c80271e
+      size: 50119140
+    - path: data/processed/X_train.csv
+      hash: md5
+      md5: 8f48c9c23f544eca0570faed51bc2716
+      size: 299766283
+    - path: data/processed/X_val.csv
+      hash: md5
+      md5: 59cb369f9b6ce8b8de57795f64cb79f6
+      size: 99693442
+    - path: data/processed/prepared_data.csv
+      hash: md5
+      md5: 3ddb603c38454cea4eaf029e4be30ec5
+      size: 190650395
+    - path: data/processed/y_train.csv
+      hash: md5
+      md5: ac833520deea2848b9f1beef98cc4279
+      size: 15631235
+    - path: data/processed/y_val.csv
+      hash: md5
+      md5: 8889f9c2b8f6325424e681d53540ef64
+      size: 5210207
+    - path: data/raw/item_categories.csv
+      hash: md5
+      md5: 05c62f1bed0c0655924fc62fe921fb56
+      size: 3573
+    - path: data/raw/items.csv
+      hash: md5
+      md5: effd92430acdb03efca8542f7270e334
+      size: 1568417
+    - path: data/raw/sales_train.csv
+      hash: md5
+      md5: bc7e53cc48549aba37d690093256facf
+      size: 94603866
+    - path: data/raw/shops.csv
+      hash: md5
+      md5: beb40ce29c3db609a93b19ebbd1667b1
+      size: 2977
+    - path: data/raw/test.csv
+      hash: md5
+      md5: aabf81b3af9a427e897aa77f77e8b971
+      size: 3182735
+    - path: get_data.py
+      hash: md5
+      md5: 1f0de6a0aa17b92c948ef53ab5f59d8b
+      size: 1375
+  prepare_data:
+    cmd: python get_data.py
+    deps:
+    - path: data/processed/X_test.csv
+      hash: md5
+      md5: 7c86e8e43ac9f57f8ef5422c3c80271e
+      size: 50119140
+    - path: data/processed/X_train.csv
+      hash: md5
+      md5: 8f48c9c23f544eca0570faed51bc2716
+      size: 299766283
+    - path: data/processed/X_val.csv
+      hash: md5
+      md5: 59cb369f9b6ce8b8de57795f64cb79f6
+      size: 99693442
+    - path: data/processed/prepared_data.csv
+      hash: md5
+      md5: 3ddb603c38454cea4eaf029e4be30ec5
+      size: 190650395
+    - path: data/processed/y_train.csv
+      hash: md5
+      md5: ac833520deea2848b9f1beef98cc4279
+      size: 15631235
+    - path: data/processed/y_val.csv
+      hash: md5
+      md5: 8889f9c2b8f6325424e681d53540ef64
+      size: 5210207
+    - path: data/raw/sales_train.csv
+      hash: md5
+      md5: bc7e53cc48549aba37d690093256facf
+      size: 94603866
+    - path: data/raw/sales_train.csv
+      hash: md5
+      md5: bc7e53cc48549aba37d690093256facf
+      size: 94603866
+    - path: get_data.py
+      hash: md5
+      md5: 1f0de6a0aa17b92c948ef53ab5f59d8b
+      size: 1375
